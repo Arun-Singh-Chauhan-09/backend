@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: 009160053087.dkr.ecr.ap-south-1.amazonaws.com/backend:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "postgres.cjq4qqiagabn.ap-south-1.rds.amazonaws.com" # Replace with your RDS endpoint
+        - name: DB_USER
+          value: "postgres" # Replace with your RDS username
+        - name: DB_PASSWORD
+          value: "postgres" # Replace with your RDS password
+        - name: DB_NAME
+          value: "postgres" # Replace with your RDS database name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: backend
